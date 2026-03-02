@@ -313,9 +313,14 @@ export default function Home() {
               
               for (let i = 0; i < header.length; i++) {
                 const h = String(header[i] || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');
-                if (h.includes('embarcacao')) colEmbarcacao = i;
-                if (h.includes('data')) colData = i;
-                if (h.includes('distancia') || h.includes('mn')) colDistancia = i;
+                // Para embarcação, preferir coluna que seja APENAS "embarcação" (ignorar "correção nome embarcação")
+                if (h === 'embarcacao' || h === 'embarcacao ' || h === ' embarcacao') {
+                  colEmbarcacao = i;
+                }
+                // Detectar coluna de data (inclui "data corrigida")
+                if (h.includes('data') && !h.includes('hora')) colData = i;
+                // Detectar coluna de distância
+                if (h.includes('distancia') || (h.includes('mn') && h.includes('distancia'))) colDistancia = i;
               }
               
               const dados = [];
